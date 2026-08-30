@@ -2,44 +2,46 @@
 
 > **AI Resource & Intelligence Assistant — an intelligent HR ecosystem for employees and HR teams.**
 
-A.R.I.A. is an enterprise-oriented HR intelligence platform that combines **Retrieval-Augmented Generation (RAG), specialized AI HR agents, secure role-based access control, workforce intelligence, and human-in-the-loop HR escalation** into a unified conversational experience.
+A.R.I.A. is an enterprise HR intelligence platform that brings together **Retrieval-Augmented Generation (RAG), specialized AI HR agents, role-based access control, workforce intelligence, and human-in-the-loop HR workflows** in a unified conversational experience.
 
-Rather than functioning as a conventional HR chatbot, A.R.I.A. is designed as an **AI-assisted HR operating layer**: employees can interact with specialized HR agents for different areas of HR, while authorized HR personnel can securely access workforce information, manage escalations, and use AI to reduce repetitive operational workload.
+The platform is designed to operate as an **AI-assisted HR ecosystem**, enabling employees to access approved HR knowledge and relevant services through specialized AI HR agents, while authorized HR personnel receive secure access to workforce information, operational workflows, escalations, and analytics.
 
-The architecture follows the principle that specialized agents should be defined by their **responsibilities, prompts, tools, knowledge sources, workflows, and permissions** rather than requiring a separately fine-tuned model for every HR function.
+A.R.I.A. is designed around a clear operating principle:
+
+> **AI handles repetitive, knowledge-driven HR interactions; authorized HR teams retain control over sensitive information, decisions, and exceptions.**
 
 ---
 
-## 🎯 Product Vision
+## 🎯 Platform Vision
 
-A.R.I.A. is designed to work like an **AI-assisted HR department**.
+A.R.I.A. extends the traditional HR help-desk model into an intelligent, governed HR interaction layer.
 
 ```text
-                         A.R.I.A.
-                    HR Orchestrator
-                           │
-        ┌──────────────────┼──────────────────┐
-        │                  │                  │
-        ▼                  ▼                  ▼
-  Leave & Policy     Payroll & Benefits   Career & Projects
-      Agent                Agent               Agent
-        │                  │                  │
-        ▼                  ▼                  ▼
-    Policy RAG         Payroll Data       Project Data
+                              A.R.I.A.
+                           HR Orchestrator
+                                  │
+             ┌────────────────────┼────────────────────┐
+             │                    │                    │
+             ▼                    ▼                    ▼
+      Leave & Attendance   Payroll & Benefits   Projects & Career
+            Agent                 Agent                Agent
+             │                    │                    │
+             ▼                    ▼                    ▼
+          Policy RAG          HR Knowledge       Workforce Data
 ```
 
-Employees can choose a relevant HR specialist while the central orchestrator validates the request and routes it appropriately.
+Employees can interact with the HR specialist most relevant to their requirement, while the central orchestration layer validates intent, applies access controls, retrieves authorized context, and routes the request to the appropriate agent.
 
-### Choose your HR specialist
+### AI HR Specialists
 
 - **Leave & Attendance** — leave, attendance, holidays, WFH and related policies
-- **Payroll & Benefits** — salary, payslips, deductions, benefits and reimbursements
-- **Career & Growth** — performance, learning, promotions and career development
+- **Payroll & Benefits** — salary, deductions, reimbursements, benefits and payroll-related information
+- **Career & Growth** — performance, learning, development and career-related processes
 - **Projects & Allocation** — project assignment, allocation, bench status and internal opportunities
-- **Employee Relations** — workplace concerns, grievances and sensitive matters
-- **General HR** — general HR policies and employee support
+- **Employee Relations** — workplace concerns, grievances and matters requiring human review
+- **General HR** — general policies, processes and employee support
 
-> **Important:** A.R.I.A. should clearly identify these as AI HR specialists, not real human employees. Queries requiring human judgment or sensitive review can be escalated to the HR team.
+Specialists are **AI agents**, not representations of individual HR employees. Sensitive or decision-oriented cases can be transferred to the appropriate human HR team.
 
 ---
 
@@ -47,119 +49,141 @@ Employees can choose a relevant HR specialist while the central orchestrator val
 
 ## 🤖 AI HR Assistant
 
-Employees can use natural language to get contextual assistance across:
+Employees can use natural language to obtain contextual assistance across:
 
 - HR policies and procedures
 - Leave and attendance
 - Payroll and benefits
 - Career development
-- Projects and allocation
+- Project allocation
 - Employment policies
 - Workplace processes
 - General HR queries
 
-The assistant uses approved organizational knowledge and authorized business data rather than relying solely on the LLM's internal knowledge.
+Responses are grounded in approved organizational knowledge and authorized business data rather than relying solely on the model's pretrained knowledge.
 
 ---
 
 ## 🧠 Multi-Agent HR Architecture
 
-A.R.I.A. uses a **supervisor/orchestrator pattern** instead of treating every HR query as a single generic chatbot interaction.
+A.R.I.A. follows a **supervisor/orchestrator architecture** rather than implementing every HR workflow as one generic chatbot.
 
 ```text
-                         Employee
-                            │
-                            ▼
-                    ┌───────────────┐
-                    │ A.R.I.A       │
-                    │ Supervisor    │
-                    └───────┬───────┘
-                            │
-                       Intent Detection
-                            │
-          ┌─────────────────┼─────────────────┐
-          │                 │                 │
-          ▼                 ▼                 ▼
-     Leave Agent      Payroll Agent      Project Agent
-          │                 │                 │
-          ▼                 ▼                 ▼
-      FAISS +          FAISS +          PostgreSQL +
-      Policies         Policies         Project Data
+                           Employee
+                              │
+                              ▼
+                      ┌───────────────┐
+                      │ A.R.I.A.      │
+                      │ Orchestrator  │
+                      └───────┬───────┘
+                              │
+                         Intent Analysis
+                              │
+              ┌───────────────┼────────────────┐
+              │               │                │
+              ▼               ▼                ▼
+        Leave Agent     Payroll Agent     Projects Agent
+              │               │                │
+              ▼               ▼                ▼
+          Policy RAG       Policy RAG       Workforce Data
 ```
 
-The employee may explicitly select an agent, but the supervisor can validate the actual intent.
+The employee may select a specialist explicitly, while the orchestrator can validate the actual intent before executing the workflow.
 
-For example:
+Example:
 
 ```text
 Selected Agent: Payroll
 Actual Intent: Leave Policy
+        │
+        ▼
+Route to Leave & Attendance Agent
 ```
 
-A.R.I.A. can then route the request to the appropriate specialist rather than blindly trusting the selected category.
+This prevents the selected category from becoming an implicit authorization or routing decision.
 
-This provides a more reliable and extensible agent architecture.
+### Agent design
+
+Each specialist is defined by:
+
+- Responsibilities
+- System instructions
+- Approved knowledge sources
+- Available tools
+- Data permissions
+- Workflow rules
+- Escalation conditions
+- Evaluation criteria
+
+The architecture therefore supports adding new HR capabilities without creating a separate model for every business function.
 
 ---
 
 # 🔎 Retrieval-Augmented Generation
 
-A.R.I.A. uses **RAG** to ground AI responses in approved HR knowledge.
+A.R.I.A. uses RAG to ground HR responses in **approved and maintainable organizational knowledge**.
 
 ```text
-HR Documents
-     │
-     ▼
-Document Processing
-     │
-     ▼
-Chunking
-     │
-     ▼
-Embeddings
-     │
-     ▼
-FAISS Vector Index
-     │
-     ▼
-Semantic Retrieval
-     │
-     ▼
-Relevant Policy Context
-     │
-     ▼
-Specialized HR Agent
-     │
-     ▼
-LLM
-     │
-     ▼
-Grounded Response
+HR Policies / Knowledge Base
+            │
+            ▼
+    Document Processing
+            │
+            ▼
+         Chunking
+            │
+            ▼
+        Embeddings
+            │
+            ▼
+     FAISS Vector Index
+            │
+            ▼
+   Semantic Retrieval
+            │
+            ▼
+ Authorized Context Selection
+            │
+            ▼
+    Specialized HR Agent
+            │
+            ▼
+            LLM
+            │
+            ▼
+     Grounded Response
 ```
 
 ### RAG capabilities
 
 - HR document ingestion
-- Text chunking
+- Document chunking
 - Embedding generation
-- Semantic search
-- FAISS indexing
+- Semantic retrieval
+- FAISS vector indexing
 - Context-aware prompting
-- Configurable retrieval
 - Document metadata
-- Extensible hybrid retrieval
+- Configurable top-k retrieval
+- Extensible hybrid retrieval architecture
 
 ### Security principle
 
-> **RAG is a knowledge retrieval mechanism, not a security boundary.**
+> **RAG is a retrieval mechanism, not an authorization mechanism.**
 
-Authorization must happen before sensitive employee information is retrieved and supplied to an LLM.
+Authorization must be evaluated **before sensitive employee information is retrieved and passed into an agent or LLM context.
 
 ---
 
-# 🤖 LLM Provider Flexibility
+# 🤖 LLM & Model Provider Abstraction
 
-A.R.I.A. is designed with an LLM abstraction layer so the application is not tightly coupled to one provider.
+A.R.I.A. uses a provider abstraction so the platform can operate with enterprise-managed cloud models or controlled local inference without changing the application architecture.
+
+### Supported model environments
+
+- **OpenAI**
+- **Azure OpenAI**
+- **Ollama**
+- Local/self-hosted models
 
 ## OpenAI
 
@@ -173,7 +197,7 @@ OPENAI_MODEL=gpt-4o-mini
 
 ```env
 LLM_PROVIDER=azure
-AZURE_OPENAI_API_KEY=your-key
+AZURE_OPENAI_API_KEY=your-api-key
 AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 AZURE_OPENAI_API_VERSION=2024-12-01-preview
 AZURE_OPENAI_DEPLOYMENT=gpt-4o
@@ -198,13 +222,7 @@ ollama pull llama3.1:8b
 ollama pull nomic-embed-text
 ```
 
-This allows the same architecture to support:
-
-- Cloud LLMs
-- Enterprise-managed Azure models
-- Local/self-hosted models through Ollama
-
-This is particularly useful where enterprise data-governance requirements favor controlled or private inference.
+Ollama provides an option for controlled local inference where organizational requirements favor keeping model inference within an approved environment.
 
 ---
 
@@ -212,21 +230,21 @@ This is particularly useful where enterprise data-governance requirements favor 
 
 A.R.I.A. separates employee-facing capabilities from privileged HR operations.
 
-## Employee
+## Employee Access
 
-Employees can access:
+Employees can access information and services permitted for their identity, such as:
 
-- Their own authorized profile information
-- Approved HR knowledge
+- Their authorized employee profile information
+- Approved HR policies and knowledge
 - Their own project/allocation information where permitted
-- Their own HR requests
+- Their HR requests
 - AI HR specialists
-- Feedback functionality
+- Feedback and issue reporting
 - HR escalation
 
-## HR
+## HR Access
 
-Authorized HR users can access additional workforce information according to their permissions, including:
+Authorized HR personnel can access workforce information according to their assigned permissions, including:
 
 - Employee IDs
 - Employee profiles
@@ -234,25 +252,29 @@ Authorized HR users can access additional workforce information according to the
 - Employment type
 - Employment status
 - Project assignments
-- Allocation percentage
+- Allocation information
 - Bench information
 - Notice periods
 - Workforce information
 - HR support tickets
+- Escalated employee queries
 
-## HR Administrator
+## HR Administrator Access
 
-HR administrators can be provided with broader capabilities such as:
+HR administrators can be granted broader operational capabilities, including:
 
 - Workforce administration
-- User management
-- HR operations
+- User and role management
+- HR workflow administration
 - Audit visibility
 - Configuration management
+- Knowledge-base administration
 
 ---
 
 # 🛡️ Authorization Architecture
+
+A.R.I.A. follows an **authorization-before-retrieval** model.
 
 ```text
 User
@@ -261,16 +283,16 @@ User
 Authentication
  │
  ▼
-Role = Employee / HR / HR Admin
+Role / Identity
+ │
+ ├──────── Employee
+ │
+ ├──────── HR
+ │
+ └──────── HR Administrator
  │
  ▼
-Permission Check
- │
- ├── Employee → Own authorized data
- │
- ├── HR → Authorized workforce data
- │
- └── HR Admin → Administrative data
+Permission Evaluation
  │
  ▼
 Authorized Data Retrieval
@@ -279,47 +301,49 @@ Authorized Data Retrieval
 Agent Context
  │
  ▼
-LLM
+LLM / Tool Execution
+ │
+ ▼
+Response
 ```
 
-For example:
+### Example
 
-### Employee
+An employee may ask:
 
 ```text
-"Am I on the bench?"
-        │
-        ▼
-       YES
+"Am I currently on the bench?"
 ```
 
-### Employee
+If their own allocation record is authorized:
 
 ```text
-"Give me everyone who has been on the bench for 90 days."
-        │
-        ▼
-      DENIED
+Allowed → Retrieve own allocation status
 ```
 
-### Authorized HR
+An employee asking:
 
 ```text
-"Show employees on bench for more than 90 days."
-        │
-        ▼
-     ALLOWED
+"Show me everyone who has been on the bench for more than 90 days."
 ```
 
-This fine-grained authorization model is essential when the platform handles employee and workforce information.
+should receive:
+
+```text
+Denied → Insufficient permission
+```
+
+An authorized HR user with the appropriate workforce permission may perform the corresponding query.
+
+This prevents sensitive workforce information from being exposed merely because an LLM can interpret the request.
 
 ---
 
 # 🏢 Workforce Intelligence
 
-A.R.I.A. is designed to provide a controlled intelligence layer over structured HR and workforce information.
+A.R.I.A. provides a controlled intelligence layer over structured HR and workforce information.
 
-Potential data domains include:
+Depending on authorization and the organization's data model, workforce records can include:
 
 - Employee ID
 - Employee name
@@ -330,7 +354,7 @@ Potential data domains include:
 - Employment type
 - Employment status
 - Permanent / contractual classification
-- Project assignments
+- Project assignment
 - Project role
 - Allocation percentage
 - Bench status
@@ -338,76 +362,79 @@ Potential data domains include:
 - Notice period
 - Skills
 
-The platform can later integrate with enterprise HRMS/HCM systems rather than relying exclusively on manually maintained records.
+The platform is designed to integrate with approved enterprise HRMS/HCM and workforce systems rather than requiring HR teams to maintain duplicate records manually.
 
 ---
 
-# 🎫 Human-in-the-Loop HR Escalation
+# 🎫 Human-in-the-Loop HR Workflows
 
-AI should not attempt to answer every HR question autonomously.
+A.R.I.A. is intentionally designed **not to answer every HR question autonomously**.
 
-When A.R.I.A.:
+A request can be escalated when:
 
-- cannot confidently answer,
-- lacks sufficient policy context,
-- encounters a sensitive matter, or
-- receives an explicit request for human assistance,
-
-the conversation can be escalated to the appropriate HR team.
+- The system cannot confidently answer
+- Relevant policy context is unavailable
+- The matter requires human judgment
+- The matter is sensitive or confidential
+- The employee explicitly requests human assistance
+- A workflow requires HR approval
 
 ```text
 Employee Query
       │
       ▼
+A.R.I.A. Orchestrator
+      │
+      ▼
 Specialized HR Agent
       │
       ▼
-RAG + Authorized Data
+Authorization + RAG + Tools
       │
       ▼
-AI Response
+   AI Response
       │
-      ├──────────────► Satisfactory
-      │                     │
-      │                     ▼
-      │                  Employee
+      ├──────────────► Resolved
       │
-      └──────────────► Unsupported / Sensitive
-                            │
-                            ▼
-                       HR Escalation
-                            │
-                            ▼
+      └──────────────► Unsupported / Sensitive / Human Requested
+                              │
+                              ▼
+                         HR Escalation
+                              │
+                              ▼
                          HR Ticket
-                            │
-                            ▼
-                       Human HR Review
-                            │
-                            ▼
-                         Resolution
+                              │
+                              ▼
+                        HR Assignment
+                              │
+                              ▼
+                        Human Review
+                              │
+                              ▼
+                           Resolution
 ```
 
-An escalation can contain:
+An escalation record can include:
 
-- Employee
+- Employee reference
 - Selected HR specialist
-- Original question
-- Conversation context
-- Relevant retrieved policy context
+- Original query
+- Relevant conversation context
+- Retrieved policy context
 - AI response
-- Reason for escalation
+- Escalation reason
 - Priority
 - Ticket status
 - HR assignment
-- Final resolution
+- Resolution notes
 
-This allows the limited HR team to focus on **exceptions, sensitive cases, and decisions**, while A.R.I.A. handles repetitive first-line HR support.
+This enables a limited HR team to focus on **exceptions, sensitive cases, and decisions**, while A.R.I.A. handles repetitive first-line support.
 
 ---
 
-# 💬 Employee Feedback & Knowledge-Gap Loop
+# 💬 Employee Feedback & Knowledge-Gap Management
 
-Employees can provide feedback when an answer is:
+Employees can provide feedback when an AI response is:
 
 - Helpful
 - Incorrect
@@ -415,119 +442,110 @@ Employees can provide feedback when an answer is:
 - Unclear
 - Unsupported
 
-They can also directly submit questions that the chatbot was unable to explain.
-
-This creates a continuous improvement loop:
+They can also submit questions that A.R.I.A. could not adequately answer.
 
 ```text
-Employee Feedback
-       │
-       ▼
-Query & Response Analytics
-       │
-       ▼
-Knowledge Gap Detection
-       │
-       ▼
-Policy / Document Updates
-       │
-       ▼
-Retrieval Improvements
-       │
-       ▼
-Agent Evaluation
-       │
-       ▼
-Improved HR Experience
+Employee Feedback / Unresolved Query
+                │
+                ▼
+       Query & Response Analytics
+                │
+                ▼
+        Knowledge Gap Detection
+                │
+                ▼
+       HR Review / Policy Update
+                │
+                ▼
+        Knowledge Base Update
+                │
+                ▼
+        Retrieval Evaluation
+                │
+                ▼
+          Agent Evaluation
+                │
+                ▼
+       Improved HR Experience
 ```
 
-Feedback can help identify:
-
-- Missing policies
-- Weak retrieval results
-- Ambiguous policies
-- Frequently escalated questions
-- Agent-specific weaknesses
-- High-volume HR support areas
+This creates a feedback loop between employee interactions, HR knowledge management, retrieval quality and agent performance.
 
 ---
 
 # 📊 HR Intelligence & Analytics
 
-Because employee interactions can be categorized, A.R.I.A. can provide aggregated insights to authorized HR users.
+Authorized HR users can receive aggregated operational insights from A.R.I.A.
 
-Example:
+Potential metrics include:
 
-```text
-10,000 Employee Conversations
-
-Leave & Attendance     → 31%
-Payroll & Benefits     → 22%
-Projects / Bench      → 18%
-Benefits               → 11%
-Career                 →  9%
-Employee Relations     →  5%
-Other                  →  4%
-```
-
-This can help HR understand:
-
-> **Where are employees spending the most HR support effort?**
-
-Potential analytics include:
-
-- Query volume by category
+- Query volume by HR category
 - AI resolution rate
-- Escalation rate
-- Feedback score
+- HR escalation rate
 - Frequently unresolved questions
+- Feedback score
 - Policy knowledge gaps
 - Agent routing accuracy
 - Average response latency
 - HR workload distribution
+- Frequently requested HR services
 
-Only appropriately aggregated or authorized information should be exposed through analytics.
+Example:
+
+```text
+Employee HR Queries
+
+Leave & Attendance     → 31%
+Payroll & Benefits     → 22%
+Projects / Allocation  → 18%
+Benefits               → 11%
+Career & Growth        →  9%
+Employee Relations     →  5%
+Other                  →  4%
+```
+
+Analytics should be restricted to authorized HR users and exposed at an appropriate level of aggregation.
 
 ---
 
-# 🧩 System Architecture
+# 🧩 Platform Architecture
 
 ```text
-┌───────────────────────────────────────────────────────────┐
-│                     A.R.I.A. FRONTEND                     │
-│                 React + TypeScript + Vite                 │
-└────────────────────────────┬──────────────────────────────┘
-                             │
-                             ▼
-┌───────────────────────────────────────────────────────────┐
-│                       API LAYER                            │
-│                    Flask REST APIs                         │
-│              Authentication + RBAC + Audit                 │
-└───────────────┬───────────────────────────┬───────────────┘
-                │                           │
-                ▼                           ▼
-      ┌───────────────────┐       ┌────────────────────────┐
-      │ A.R.I.A.          │       │ Authorization Layer    │
-      │ Orchestrator      │       │                        │
-      │                   │       │ Employee               │
-      │ Intent + Routing  │       │ HR                     │
-      └─────────┬─────────┘       │ HR Administrator       │
-                │                 └───────────┬────────────┘
-                ▼                             │
-      ┌───────────────────────┐               ▼
-      │ Specialized AI Agents │      ┌──────────────────────┐
-      │                       │      │ Workforce Data Layer │
-      │ Leave                 │      │                      │
-      │ Payroll               │      │ Employees            │
-      │ Career                │      │ Projects             │
-      │ Projects              │      │ Assignments          │
-      │ Relations             │      └──────────┬───────────┘
-      │ General HR            │                 │
-      └───────────┬───────────┘                 │
-                  │                             │
-                  ▼                             ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    A.R.I.A. FRONTEND                       │
+│               React + TypeScript + Vite                    │
+└─────────────────────────────┬───────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                         API LAYER                           │
+│              Flask REST APIs + Authentication               │
+│                     RBAC + Audit                            │
+└───────────────┬─────────────────────────────┬───────────────┘
+                │                             │
+                ▼                             ▼
+      ┌───────────────────┐        ┌────────────────────────┐
+      │ A.R.I.A.          │        │ Authorization Layer    │
+      │ Orchestrator      │        │                        │
+      │                   │        │ Employee               │
+      │ Intent + Routing  │        │ HR                     │
+      └─────────┬─────────┘        │ HR Administrator       │
+                │                  └────────────┬───────────┘
+                ▼                               │
+      ┌───────────────────────┐                 ▼
+      │ Specialized AI Agents │       ┌──────────────────────┐
+      │                       │       │ Workforce Data Layer │
+      │ Leave & Attendance    │       │                      │
+      │ Payroll & Benefits    │       │ Employees            │
+      │ Career & Growth       │       │ Projects             │
+      │ Projects & Allocation │       │ Assignments          │
+      │ Employee Relations    │       └──────────┬───────────┘
+      │ General HR            │                  │
+      └───────────┬───────────┘                  │
+                  │                              │
+                  ▼                              ▼
       ┌──────────────────────┐       ┌──────────────────────┐
-      │      RAG Engine      │       │ HR Workflow Engine   │
+      │       RAG Engine     │       │ HR Workflow Engine   │
       │                      │       │                      │
       │ Chunking             │       │ Escalation           │
       │ Embeddings           │       │ Tickets              │
@@ -537,7 +555,7 @@ Only appropriately aggregated or authorized information should be exposed throug
                  │
                  ▼
       ┌────────────────────────────────────────────────────┐
-      │                 LLM ABSTRACTION                     │
+      │                 MODEL ABSTRACTION                   │
       │                                                    │
       │ OpenAI │ Azure OpenAI │ Ollama │ Local Models     │
       └────────────────────────────────────────────────────┘
@@ -562,6 +580,7 @@ Only appropriately aggregated or authorized information should be exposed throug
 - REST APIs
 - JWT authentication
 - Role-Based Access Control
+- Modular service architecture
 
 ## AI / ML
 
@@ -581,22 +600,23 @@ Only appropriately aggregated or authorized information should be exposed throug
 
 - PostgreSQL-ready architecture
 - SQLite for development
-- Structured employee/workforce data
+- Structured workforce data
 - FAISS vector index
 - Document metadata
 
 ## Engineering
 
-- Modular backend architecture
 - Environment-based configuration
+- Authentication and authorization
 - Audit logging
 - Human-in-the-loop workflows
 - LLM provider abstraction
-- Extensible agent architecture
+- Modular agent architecture
+- Evaluation and observability
 
 ---
 
-# 📁 Project Structure
+# 📁 Repository Structure
 
 ```text
 aria-hr-platform/
@@ -652,16 +672,16 @@ aria-hr-platform/
 
 ---
 
-# 🚀 Getting Started
+# 🚀 Development Setup
 
 ## 1. Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/aria-hr-platform.git
-cd aria-hr-platform
+git clone https://github.com/<organization>/<repository>.git
+cd <repository>
 ```
 
-## 2. Backend setup
+## 2. Backend environment
 
 ```bash
 cd backend
@@ -686,7 +706,7 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-Create the environment file:
+Create the local environment file:
 
 ```bash
 copy .env.example .env
@@ -698,7 +718,7 @@ or:
 cp .env.example .env
 ```
 
-Configure the required LLM provider.
+Configure the approved model provider and application settings.
 
 ## 3. Initialize development data
 
@@ -712,7 +732,7 @@ python seed_demo.py
 python run.py
 ```
 
-The API will be available at:
+The development API is available at:
 
 ```text
 http://localhost:8000
@@ -720,7 +740,7 @@ http://localhost:8000
 
 ## 5. Start the frontend
 
-In another terminal:
+From another terminal:
 
 ```bash
 cd frontend
@@ -728,13 +748,15 @@ npm install
 npm run dev
 ```
 
-Open the Vite development URL displayed in the terminal.
+Use the development URL displayed by Vite.
 
 ---
 
-# 🦙 Running with Ollama
+# 🦙 Local Inference with Ollama
 
-Install Ollama and pull the required models:
+A.R.I.A. can be configured to use Ollama for local model inference.
+
+Install the required models:
 
 ```bash
 ollama pull llama3.1:8b
@@ -750,15 +772,17 @@ OLLAMA_MODEL=llama3.1:8b
 OLLAMA_EMBEDDING_MODEL=nomic-embed-text
 ```
 
-Then start the backend:
+Start the backend:
 
 ```bash
 python run.py
 ```
 
+For enterprise deployments, model selection should be based on organizational requirements for quality, latency, infrastructure, privacy, and governance.
+
 ---
 
-# ☁️ Running with OpenAI / Azure OpenAI
+# ☁️ OpenAI / Azure OpenAI Configuration
 
 ### OpenAI
 
@@ -779,13 +803,15 @@ AZURE_OPENAI_DEPLOYMENT=gpt-4o
 AZURE_OPENAI_EMBEDDING_DEPLOYMENT=text-embedding-3-small
 ```
 
+Credentials should be provided through the organization's approved secret-management mechanism in controlled environments.
+
 ---
 
-# 🧪 Development Data
+# 🧪 Development & Test Data
 
-Local development can use synthetic employee and HR data.
+Development environments should use **synthetic or anonymized employee data**.
 
-Example roles:
+Example application roles:
 
 ```text
 Employee
@@ -793,15 +819,15 @@ HR
 HR Administrator
 ```
 
-Production environments should use the organization's approved identity provider and HR systems.
+Production deployments should use the organization's approved identity provider, HR systems, databases, and security controls.
 
-**Never use demo credentials, synthetic secrets, or development databases in production.**
+Production employee records should never be copied into local development environments unless explicitly authorized under organizational policy.
 
 ---
 
-# 📈 Evaluation & Observability
+# 📈 AI Evaluation & Observability
 
-A production HR AI platform should be evaluated across multiple dimensions.
+A.R.I.A. should be evaluated across retrieval, generation, agent behavior, security and product performance.
 
 ## Retrieval
 
@@ -826,192 +852,221 @@ A production HR AI platform should be evaluated across multiple dimensions.
 - Policy compliance
 - Unauthorized-data rejection rate
 
-## Product metrics
+## Platform metrics
 
 - Query resolution rate
 - HR escalation rate
-- Employee satisfaction
-- Feedback score
-- Average latency
+- Employee feedback score
+- Response latency
 - Token usage
 - Cost per interaction
+- Service availability
+
+Evaluation should be performed against representative HR scenarios before model, prompt, retrieval or policy changes are promoted.
 
 ---
 
-# 🔮 Roadmap
+# 🔒 Security & Data Protection
 
-## Phase 1 — AI HR Assistant
+A.R.I.A. is designed for enterprise HR environments where employee and organizational information requires controlled access and appropriate protection.
 
-- RAG-based policy Q&A
-- Specialized HR agents
-- Employee authentication
-- Feedback
-- Human escalation
+The platform follows a security-first architecture based on:
 
-## Phase 2 — HR Operations
+- Authentication and authorization
+- Role-Based Access Control
+- Least-privilege access
+- Authorization before sensitive retrieval
+- Controlled access to AI agents and tools
+- Secure handling of application credentials
+- Auditability of privileged operations
+- Protected HR and workforce data
+- Human review for sensitive workflows
+- Controlled document ingestion
+- Data retention and deletion controls
+- Monitoring and operational security
 
-- HR dashboard
-- Employee profiles
-- Project allocation
-- Bench analytics
-- HR ticket management
+### Repository Security
 
-## Phase 3 — Enterprise Integration
+The repository must never contain:
 
-- Enterprise SSO
-- HRMS/HCM integration
-- Email integration
-- Collaboration-platform integration
-- Automated workflows
+- API keys
+- Access tokens
+- Passwords
+- Private certificates or credentials
+- Production database files
+- Employee personal information
+- Confidential HR documents
+- Production workforce exports
+- Private organizational data
 
-## Phase 4 — Intelligent HR Platform
+Environment-specific credentials should be supplied through environment configuration or the organization's approved secrets-management platform.
 
-- Agentic HR workflows
-- Workforce analytics
-- Automated ticket routing
-- SLA monitoring
-- Advanced RAG evaluation
-- Enterprise observability
-- Intelligent workforce insights
-
----
-
-# 🔭 Future Enhancements
-
-Potential extensions include:
-
-- Enterprise SSO / Microsoft Entra ID
-- MFA
-- PostgreSQL
-- HRMS/HCM integrations
-- Microsoft Teams / Slack integration
-- Automated HR ticket assignment
-- SLA and escalation monitoring
-- Hybrid BM25 + vector retrieval
-- Cross-encoder reranking
-- Document versioning
-- Policy lifecycle management
-- PII detection and redaction
-- Agent evaluation framework
-- LLM observability and tracing
-- Conversation analytics
-- Multi-tenant architecture
-- Attribute-Based Access Control
-- Enterprise vector infrastructure
-- Automated knowledge-base updates
+For public development repositories, use only synthetic or anonymized data and non-confidential example policies.
 
 ---
 
-# 🔒 Production Security
+# 🏢 Enterprise Deployment
 
-Before processing real employee information, production deployments should implement appropriate:
+A.R.I.A. is designed to integrate with an organization's existing enterprise ecosystem.
 
-- Enterprise authentication and SSO
-- MFA
-- Least-privilege authorization
-- Fine-grained permission policies
-- Encryption in transit and at rest
-- Managed secret storage
-- PII protection
-- Audit logging
-- Data retention and deletion policies
-- Secure document ingestion
-- File-type and upload-size validation
-- Rate limiting
-- HTTPS
-- Restricted CORS
-- Production WSGI serving
-- Security monitoring
-- LLM/vendor data-governance review
+A production deployment can integrate with:
 
-Sensitive employee information should not be placed into unrestricted vector indexes.
+- Enterprise identity and SSO
+- HRMS / HCM platforms
+- Workforce management systems
+- PostgreSQL or approved enterprise databases
+- Enterprise email
+- Collaboration platforms
+- Enterprise secrets management
+- Centralized logging and monitoring
+- Approved AI/LLM infrastructure
+
+The production architecture should be aligned with the organization's:
+
+- Information security standards
+- Privacy requirements
+- HR governance
+- Identity and access-management policies
+- Data retention policies
+- AI governance framework
+- Vendor/model risk requirements
+- Compliance obligations
 
 ---
 
-# 🧭 Design Principles
-
-A.R.I.A. is built around several engineering principles:
+# 🧭 Engineering Principles
 
 ### 1. AI assists — HR remains accountable
 
-AI handles repetitive and knowledge-driven requests while human HR retains responsibility for sensitive cases and decisions.
+A.R.I.A. automates repetitive and knowledge-driven support while human HR teams retain responsibility for sensitive cases and business decisions.
 
 ### 2. Authorization before intelligence
 
-Access control must happen before sensitive data enters retrieval or LLM context.
+Sensitive information is authorized before it becomes available to retrieval, tools or LLM context.
 
-### 3. Specialized agents over one giant prompt
+### 3. Specialized agents over one generic assistant
 
-Different HR domains receive purpose-specific responsibilities, tools, knowledge and policies.
+Each HR domain has purpose-specific responsibilities, tools, knowledge and workflow controls.
 
 ### 4. RAG for organizational knowledge
 
-Company policies should come from controlled knowledge sources rather than assumed model knowledge.
+Company policies and approved HR information should come from controlled knowledge sources.
 
-### 5. Human escalation is a feature
+### 5. Human escalation is a first-class workflow
 
-An inability to safely answer should result in an escalation path, not fabricated confidence.
+When AI cannot safely or confidently resolve a request, the platform provides a path to human HR support.
 
 ### 6. Provider independence
 
-The system should support cloud and local inference without redesigning the application.
+The model layer supports cloud and local inference without requiring a redesign of the application.
 
 ### 7. Continuous improvement
 
-Feedback, unresolved queries and escalation patterns should drive improvements to knowledge, retrieval and agent behavior.
+Employee feedback, unresolved queries, retrieval evaluation and escalation patterns should drive improvements to the platform.
+
+### 8. Privacy by design
+
+Employee information should be exposed according to identity, role, purpose and authorization—not simply because a user can formulate a natural-language query.
 
 ---
 
-# 🎯 Why A.R.I.A.?
+# 🔮 Platform Evolution
 
-Traditional HR support often requires employees to navigate multiple portals, documents, emails and HR contacts.
+The platform architecture supports continued expansion across four areas.
 
-A.R.I.A. creates a unified interaction layer:
+## HR Assistance
 
-```text
-                 Employee
-                    │
-                    ▼
-             ┌──────────────┐
-             │    A.R.I.A   │
-             └──────┬───────┘
-                    │
-       ┌────────────┼────────────┐
-       ▼            ▼            ▼
-     Policy       Workforce     HR Workflow
-      RAG           Data         Engine
-       │            │            │
-       └────────────┼────────────┘
-                    ▼
-             AI HR Specialist
-                    │
-          ┌─────────┴─────────┐
-          ▼                   ▼
-       Resolve             Escalate
-                              │
-                              ▼
-                         Human HR Team
-```
+- Expanded specialist agents
+- Policy Q&A
+- Employee self-service
+- Personalized HR assistance
+- Improved escalation workflows
 
-The objective is not simply to build another chatbot.
+## HR Operations
 
-The objective is to build an **AI-assisted HR ecosystem that makes HR support more accessible, scalable and intelligent while preserving security, privacy and human accountability.**
+- HR dashboard
+- Employee profile management
+- Project allocation intelligence
+- Bench analytics
+- HR ticket management
+- Workflow automation
 
----
+## Enterprise Integration
 
-# 📄 License
+- Enterprise SSO
+- HRMS/HCM integration
+- Email and collaboration integration
+- Centralized identity and access management
+- Enterprise observability
 
-Add the appropriate open-source or internal-use license before publishing the repository publicly.
+## Intelligent HR Operations
+
+- Agentic HR workflows
+- Automated ticket routing
+- SLA monitoring
+- Advanced RAG evaluation
+- Workforce analytics
+- Intelligent knowledge-gap detection
+- AI-assisted HR operations
 
 ---
 
-# ⚠️ Production Disclaimer
+# 🎯 Business Value
 
-This project is intended for controlled development, demonstration, and enterprise architecture prototyping.
+A.R.I.A. is designed to address the operational challenges created by high-volume HR support and limited HR capacity.
 
-Any production implementation involving employee information should undergo appropriate security, privacy, legal, compliance and HR governance reviews.
+### For employees
 
-**Never commit API keys, passwords, production database files, employee information, confidential HR documents or other sensitive organizational data to the repository.**
+- Faster access to HR information
+- One conversational interface for multiple HR domains
+- Reduced dependency on manual policy searches
+- Clear escalation path when AI cannot resolve a query
+
+### For HR teams
+
+- Reduced repetitive support workload
+- Centralized employee query management
+- Structured escalation workflows
+- Workforce intelligence
+- Visibility into recurring employee concerns
+- Knowledge-gap identification
+
+### For the organization
+
+- More scalable HR support
+- Consistent access to approved organizational knowledge
+- Controlled workforce intelligence
+- Better utilization of HR resources
+- Governed adoption of generative and agentic AI
+
+---
+
+# 📌 Operational Governance
+
+A.R.I.A. should be operated as part of the organization's broader HR, security and AI governance framework.
+
+Changes to:
+
+- HR knowledge sources
+- Agent instructions
+- Retrieval configuration
+- Model providers
+- Model versions
+- Data permissions
+- Workforce integrations
+- Escalation policies
+
+should be subject to appropriate development, testing, review and deployment controls.
+
+---
+
+# 📄 Repository Notice
+
+This repository contains the application architecture, engineering implementation and supporting documentation for **A.R.I.A.**
+
+Operational deployments should use the organization's approved infrastructure, identity systems, data sources, security controls and model configuration.
+
+Company-confidential information, production employee records and production credentials must remain within approved enterprise systems and repositories.
 
 ---
 
